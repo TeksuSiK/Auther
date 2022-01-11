@@ -1,0 +1,4 @@
+name: Auther
+version: 1.0-SNAPSHOT
+main: pl.teksusik.auther.AutherPlugin
+author: teksusik.

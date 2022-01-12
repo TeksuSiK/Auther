@@ -2,7 +2,12 @@ package pl.teksusik.auther;
 
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import pl.teksusik.auther.account.AccountService;
+import pl.teksusik.auther.account.PlayerListener;
+import pl.teksusik.auther.account.command.LoginCommand;
+import pl.teksusik.auther.account.command.SetupCommand;
 import pl.teksusik.auther.configuration.PluginConfiguration;
 import pl.teksusik.auther.storage.MySQLStorageImpl;
 import pl.teksusik.auther.storage.SQLiteStorageImpl;
@@ -16,14 +21,25 @@ public class AutherPlugin extends JavaPlugin {
     private PluginConfiguration pluginConfiguration;
     private Storage storage;
 
+    private AccountService accountService;
+
     @Override
     public void onEnable() {
         this.pluginConfiguration = this.registerPluginConfiguration();
         this.storage = this.registerStorage();
+
+        this.accountService = new AccountService(this.storage, this.getSLF4JLogger());
+
+        this.getServer().getPluginCommand("login").setExecutor(new LoginCommand(this.accountService, this.getSLF4JLogger()));
+        this.getServer().getPluginCommand("setup").setExecutor(new SetupCommand(this.accountService, this.getSLF4JLogger()));
+
+        PluginManager pluginManager = this.getServer().getPluginManager();
+        pluginManager.registerEvents(new PlayerListener(this, this.accountService), this);
     }
 
     @Override
     public void onDisable() {
+        this.storage.getHikariDataSource().close();
     }
 
     private PluginConfiguration registerPluginConfiguration() {

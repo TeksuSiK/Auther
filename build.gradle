@@ -22,4 +22,5 @@ dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.13.2-R0.1-SNAPSHOT'
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'eu.okaeri:okaeri-configs-yaml-bukkit:3.4.2'
+    implementation 'com.warrenstrange:googleauth:1.5.0'
 }

@@ -1,6 +1,7 @@
 package pl.teksusik.auther;
 
 import eu.okaeri.configs.ConfigManager;
+import eu.okaeri.configs.exception.OkaeriException;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -37,8 +38,12 @@ public class AutherPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.autherConfiguration = this.loadPluginConfiguration();
-        this.messageConfiguration = this.loadMessageConfiguration();
+        try {
+            this.autherConfiguration = this.loadPluginConfiguration();
+            this.messageConfiguration = this.loadMessageConfiguration();
+        } catch (OkaeriException exception) {
+            this.logger.error("There was an error loading the configuration.", exception);
+        }
 
         this.audiences = BukkitAudiences.create(this);
         this.messageService = new MessageService(this.logger, this.audiences);

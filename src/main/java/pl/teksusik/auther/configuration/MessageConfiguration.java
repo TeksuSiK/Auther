@@ -5,6 +5,8 @@ import eu.okaeri.configs.annotation.Exclude;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.util.regex.Pattern;
+
 public class MessageConfiguration extends OkaeriConfig {
     @Exclude
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -53,5 +55,12 @@ public class MessageConfiguration extends OkaeriConfig {
 
     public Component getPasswordNotMatch() {
         return passwordNotMatch;
+    }
+
+    @Exclude
+    public static final Pattern LEGACY_COLOR_CODE_PATTERN = Pattern.compile("&([0-9A-Fa-fK-Ok-oRXrx][^&]*)");
+
+    public static boolean containsLegacyColors(String string) {
+        return LEGACY_COLOR_CODE_PATTERN.matcher(string).find();
     }
 }

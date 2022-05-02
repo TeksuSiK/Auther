@@ -12,6 +12,7 @@ import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
 import pl.teksusik.auther.account.service.AccountService;
 import pl.teksusik.auther.configuration.AutherConfiguration;
 import pl.teksusik.auther.configuration.MessageConfiguration;
+import pl.teksusik.auther.configuration.MiniMessageTransformer;
 import pl.teksusik.auther.configuration.StorageType;
 import pl.teksusik.auther.message.MessageService;
 
@@ -62,6 +63,7 @@ public class AutherPlugin extends JavaPlugin {
     private MessageConfiguration loadMessageConfiguration() {
         return ConfigManager.create(MessageConfiguration.class, (it) -> {
             it.withConfigurer(new YamlBukkitConfigurer());
+            it.withSerdesPack(registry -> registry.register(new MiniMessageTransformer()));
             it.withBindFile(this.messageConfigurationFile);
             it.saveDefaults();
             it.load(true);

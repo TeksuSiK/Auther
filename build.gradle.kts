@@ -1,5 +1,8 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "pl.teksusik"
@@ -13,6 +16,23 @@ repositories {
 
 dependencies {
     compileOnly("com.destroystokyo.paper:paper-api:1.13.2-R0.1-SNAPSHOT")
-    compileOnly("eu.okaeri:okaeri-configs-yaml-bukkit:3.4.2")
-    compileOnly("com.zaxxer:HikariCP:5.0.1")
+
+    implementation("com.zaxxer:HikariCP:5.0.1")
+
+    implementation("eu.okaeri:okaeri-configs-yaml-bukkit:3.4.2")
+
+    implementation("net.kyori:adventure-text-minimessage:4.10.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.1.0")
+
+    implementation("at.favre.lib:bcrypt:0.9.0")
+}
+
+tasks.named<ShadowJar>("shadowJar") {
+    relocate("com.zaxxer", "pl.teksusik.auther.libs.com.zaxxer")
+
+    relocate("eu.okaeri", "pl.teksusik.auther.libs.eu.okaeri")
+
+    relocate("net.kyori", "pl.teksusik.auther.libs.net.kyori")
+
+    relocate("at.favre", "pl.teksusik.auther.libs.at.favre")
 }

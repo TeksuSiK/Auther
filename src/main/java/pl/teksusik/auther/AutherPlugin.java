@@ -2,14 +2,18 @@ package pl.teksusik.auther;
 
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.account.repository.impl.MySQLAccountRepository;
 import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
+import pl.teksusik.auther.account.service.AccountService;
 import pl.teksusik.auther.configuration.AutherConfiguration;
+import pl.teksusik.auther.configuration.MessageConfiguration;
 import pl.teksusik.auther.configuration.StorageType;
+import pl.teksusik.auther.message.MessageService;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,11 +25,25 @@ public class AutherPlugin extends JavaPlugin {
     private AutherConfiguration autherConfiguration;
 
     private AccountRepository accountRepository;
+    private AccountService accountService;
+
+    private BukkitAudiences audiences;
+
+    private final File messageConfigurationFile = new File(this.getDataFolder(), "messages.yml");
+    private MessageConfiguration messageConfiguration;
+    private MessageService messageService;
+
 
     @Override
     public void onEnable() {
         this.autherConfiguration = this.loadPluginConfiguration();
+        this.messageConfiguration = this.loadMessageConfiguration();
+
+        this.audiences = BukkitAudiences.create(this);
+        this.messageService = new MessageService(this.logger, this.audiences);
+
         this.accountRepository = this.loadAccountRepository();
+        this.accountService = new AccountService(this.accountRepository, this.messageService, this.messageConfiguration);
     }
 
     @Override
@@ -41,13 +59,22 @@ public class AutherPlugin extends JavaPlugin {
         });
     }
 
+    private MessageConfiguration loadMessageConfiguration() {
+        return ConfigManager.create(MessageConfiguration.class, (it) -> {
+            it.withConfigurer(new YamlBukkitConfigurer());
+            it.withBindFile(this.messageConfigurationFile);
+            it.saveDefaults();
+            it.load(true);
+        });
+    }
+
     private AccountRepository loadAccountRepository() {
         final File sqliteFile = new File(getDataFolder(), this.autherConfiguration.getSqliteFile());
         if (this.autherConfiguration.getStorageType().equals(StorageType.SQLITE)) {
             if (!sqliteFile.exists()) {
                 try {
                     if (!sqliteFile.createNewFile()) {
-                        this.logger.info(sqliteFile.getName() + "already exists.");
+                        this.logger.info("{} already exists.", sqliteFile.getName());
                     }
                 } catch (IOException exception) {
                     exception.printStackTrace();

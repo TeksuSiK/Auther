@@ -36,8 +36,7 @@ public class LoginCommand implements CommandExecutor {
             return true;
         }
 
-        this.sessionService.loginPlayer(player.getUniqueId(), args[0]);
-
+        this.sessionService.loginPlayer(player.getUniqueId(), args[0], false);
         return true;
     }
 }

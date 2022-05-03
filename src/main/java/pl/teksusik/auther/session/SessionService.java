@@ -2,6 +2,7 @@ package pl.teksusik.auther.session;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;
@@ -27,7 +28,7 @@ public class SessionService {
         this.messageConfiguration = messageConfiguration;
     }
 
-    public CompletableFuture<Void> loginPlayer(UUID uuid, String password) {
+    public CompletableFuture<Void> loginPlayer(UUID uuid, String password, boolean force) {
        return CompletableFuture.runAsync(() -> {
            Optional<Account> optionalAccount = this.accountRepository.findAccount(uuid);
            if (optionalAccount.isEmpty()) {
@@ -36,10 +37,12 @@ public class SessionService {
            }
            Account account = optionalAccount.get();
 
-           BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), account.getPassword().toCharArray());
-           if (!result.verified) {
-               this.messageService.sendMessage(uuid, this.messageConfiguration.getIncorrectPassword());
-               return;
+           if (!force) {
+               BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), account.getPassword().toCharArray());
+               if (!result.verified) {
+                   this.messageService.sendMessage(uuid, this.messageConfiguration.getIncorrectPassword());
+                   return;
+               }
            }
 
            synchronized (this) {

@@ -10,15 +10,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitTask;
 import pl.teksusik.auther.AutherPlugin;
 import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MessageService;
+
+import java.util.Arrays;
 
 public class SessionListener implements Listener {
     private final AutherPlugin plugin;
@@ -120,6 +118,16 @@ public class SessionListener implements Listener {
             if (!this.sessionService.isLoggedIn(player.getUniqueId())) {
                 event.setCancelled(true);
                 event.getWhoClicked().closeInventory();
+            }
+        }
+    }
+
+    @EventHandler (priority = EventPriority.HIGHEST)
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        if (!this.sessionService.isLoggedIn(event.getPlayer().getUniqueId())) {
+            String[] args = event.getMessage().split(" ");
+            if (!(args[0].equalsIgnoreCase("/login") || args[0].equalsIgnoreCase("/l") || args[0].equalsIgnoreCase("/log"))) {
+                event.setCancelled(true);
             }
         }
     }

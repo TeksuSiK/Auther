@@ -1,10 +1,13 @@
 package pl.teksusik.auther.account.service;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MessageService;
+import pl.teksusik.auther.session.SessionService;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,11 +15,13 @@ import java.util.concurrent.CompletableFuture;
 
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final SessionService sessionService;
     private final MessageService messageService;
     private final MessageConfiguration messageConfiguration;
 
-    public AccountService(AccountRepository accountRepository, MessageService messageService, MessageConfiguration messageConfiguration) {
+    public AccountService(AccountRepository accountRepository, SessionService sessionService, MessageService messageService, MessageConfiguration messageConfiguration) {
         this.accountRepository = accountRepository;
+        this.sessionService = sessionService;
         this.messageService = messageService;
         this.messageConfiguration = messageConfiguration;
     }
@@ -36,7 +41,7 @@ public class AccountService {
             }
 
             this.messageService.sendMessage(uuid, this.messageConfiguration.getAccountRegisterSuccess());
-            //TODO AUTHORIZE SESSION
+            this.sessionService.loginPlayer(uuid, password, true);
         });
     }
 
@@ -61,7 +66,6 @@ public class AccountService {
             }
 
             this.messageService.sendMessage(uuid, this.messageConfiguration.getAccountUnregisterSuccess());
-            //TODO END SESSION
         });
     }
 }

@@ -3,7 +3,7 @@ package pl.teksusik.auther.account.service;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;
-import pl.teksusik.auther.configuration.MessageConfiguration;
+import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MessageService;
 
 import java.util.Optional;

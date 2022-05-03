@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import pl.teksusik.auther.account.service.AccountService;
-import pl.teksusik.auther.configuration.MessageConfiguration;
+import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MessageService;
 
 public class UnregisterCommand implements CommandExecutor {

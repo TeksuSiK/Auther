@@ -1,4 +1,4 @@
-package pl.teksusik.auther.configuration;
+package pl.teksusik.auther.message;
 
 import eu.okaeri.configs.schema.GenericsPair;
 import eu.okaeri.configs.serdes.BidirectionalTransformer;

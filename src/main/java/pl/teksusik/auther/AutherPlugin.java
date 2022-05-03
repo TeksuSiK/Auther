@@ -6,14 +6,13 @@ import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
-import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.account.repository.impl.MySQLAccountRepository;
 import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
 import pl.teksusik.auther.account.service.AccountService;
 import pl.teksusik.auther.configuration.AutherConfiguration;
-import pl.teksusik.auther.configuration.MessageConfiguration;
-import pl.teksusik.auther.configuration.MiniMessageTransformer;
+import pl.teksusik.auther.message.MessageConfiguration;
+import pl.teksusik.auther.message.MiniMessageTransformer;
 import pl.teksusik.auther.configuration.StorageType;
 import pl.teksusik.auther.message.MessageService;
 
@@ -34,7 +33,6 @@ public class AutherPlugin extends JavaPlugin {
     private final File messageConfigurationFile = new File(this.getDataFolder(), "messages.yml");
     private MessageConfiguration messageConfiguration;
     private MessageService messageService;
-
 
     @Override
     public void onEnable() {

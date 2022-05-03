@@ -21,6 +21,7 @@ public class MessageConfiguration extends OkaeriConfig {
     private Component badUsage = this.miniMessage.deserialize("<dark_red>Error: <red>Bad usage.");
     private Component passwordNotMatch = this.miniMessage.deserialize("<dark_red>Error: <red>The passwords do not match.");
     private Component loginReminder = this.miniMessage.deserialize("<green>Login with /login <password>");
+    private Component registerReminder = this.miniMessage.deserialize("<green>Register with /register <password> <password>");
     private Component alreadyLoggedIn = this.miniMessage.deserialize("<dark_red>Error: <red>You already logged in.");
     private Component loginSuccess = this.miniMessage.deserialize("<green>You have successfully logged in.");
     private Component passwordTooShort = this.miniMessage.deserialize("<dark_red>Error: <red>Your password is too short.");
@@ -64,6 +65,10 @@ public class MessageConfiguration extends OkaeriConfig {
 
     public Component getLoginReminder() {
         return loginReminder;
+    }
+
+    public Component getRegisterReminder() {
+        return registerReminder;
     }
 
     public Component getAlreadyLoggedIn() {

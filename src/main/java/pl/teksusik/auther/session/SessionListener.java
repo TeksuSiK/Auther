@@ -18,17 +18,23 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
 import pl.teksusik.auther.AutherPlugin;
+import pl.teksusik.auther.account.Account;
+import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MessageService;
 
+import java.util.Optional;
+
 public class SessionListener implements Listener {
     private final AutherPlugin plugin;
+    private final AccountRepository accountRepository;
     private final SessionService sessionService;
     private final MessageService messageService;
     private final MessageConfiguration messageConfiguration;
 
-    public SessionListener(AutherPlugin plugin, SessionService sessionService, MessageService messageService, MessageConfiguration messageConfiguration) {
+    public SessionListener(AutherPlugin plugin, AccountRepository accountRepository, SessionService sessionService, MessageService messageService, MessageConfiguration messageConfiguration) {
         this.plugin = plugin;
+        this.accountRepository = accountRepository;
         this.sessionService = sessionService;
         this.messageService = messageService;
         this.messageConfiguration = messageConfiguration;
@@ -39,7 +45,12 @@ public class SessionListener implements Listener {
         Player player = event.getPlayer();
 
         BukkitTask task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, () -> {
-            this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getLoginReminder());
+            Optional<Account> accountOptional = this.accountRepository.findAccount(player.getUniqueId());
+            if (accountOptional.isPresent()) {
+                this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getLoginReminder());
+            } else {
+                this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getRegisterReminder());
+            }
         }, 20L, 20L);
         this.sessionService.getLoginTaskMap().put(player.getUniqueId(), task);
     }

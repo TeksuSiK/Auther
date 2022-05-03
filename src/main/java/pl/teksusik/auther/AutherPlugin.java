@@ -10,6 +10,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.slf4j.Logger;
+import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.account.repository.impl.MySQLAccountRepository;
 import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
@@ -27,6 +28,7 @@ import pl.teksusik.auther.session.SessionService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 public class AutherPlugin extends JavaPlugin {
     private final Logger logger = this.getSLF4JLogger();
@@ -66,11 +68,16 @@ public class AutherPlugin extends JavaPlugin {
         this.getCommand("login").setExecutor(new LoginCommand(this.sessionService, this.messageService, this.messageConfiguration));
 
         PluginManager pluginManager = this.getServer().getPluginManager();
-        pluginManager.registerEvents(new SessionListener(this, this.sessionService, this.messageService, this.messageConfiguration), this);
+        pluginManager.registerEvents(new SessionListener(this, accountRepository, this.sessionService, this.messageService, this.messageConfiguration), this);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             BukkitTask task = this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-                this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getLoginReminder());
+                Optional<Account> accountOptional = this.accountRepository.findAccount(player.getUniqueId());
+                if (accountOptional.isPresent()) {
+                    this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getLoginReminder());
+                } else {
+                    this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getRegisterReminder());
+                }
             }, 20L, 20L);
             this.sessionService.getLoginTaskMap().put(player.getUniqueId(), task);
         }

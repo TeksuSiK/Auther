@@ -61,7 +61,7 @@ public class AutherPlugin extends JavaPlugin {
         this.sessionService = new SessionService(this.accountRepository, this.messageService, this.messageConfiguration);
         this.accountService = new AccountService(this.accountRepository, this.sessionService, this.messageService, this.messageConfiguration);
 
-        this.getCommand("register").setExecutor(new RegisterCommand(this.accountService, this.messageService, this.messageConfiguration));
+        this.getCommand("register").setExecutor(new RegisterCommand(this.accountService, this.autherConfiguration, this.messageService, this.messageConfiguration));
         this.getCommand("unregister").setExecutor(new UnregisterCommand(this.accountService, this.messageService, this.messageConfiguration));
         this.getCommand("login").setExecutor(new LoginCommand(this.sessionService, this.messageService, this.messageConfiguration));
 

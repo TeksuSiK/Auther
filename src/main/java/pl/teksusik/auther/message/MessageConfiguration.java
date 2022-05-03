@@ -23,6 +23,8 @@ public class MessageConfiguration extends OkaeriConfig {
     private Component loginReminder = this.miniMessage.deserialize("<green>Login with /login <password>");
     private Component alreadyLoggedIn = this.miniMessage.deserialize("<dark_red>Error: <red>You already logged in.");
     private Component loginSuccess = this.miniMessage.deserialize("<green>You have successfully logged in.");
+    private Component passwordTooShort = this.miniMessage.deserialize("<dark_red>Error: <red>Your password is too short.");
+    private Component passwordTooLong = this.miniMessage.deserialize("<dark_red>Error: <red>Your password is too long.");
 
     public Component getAccountAlreadyExists() {
         return accountAlreadyExists;
@@ -70,6 +72,14 @@ public class MessageConfiguration extends OkaeriConfig {
 
     public Component getLoginSuccess() {
         return loginSuccess;
+    }
+
+    public Component getPasswordTooShort() {
+        return passwordTooShort;
+    }
+
+    public Component getPasswordTooLong() {
+        return passwordTooLong;
     }
 
     @Exclude

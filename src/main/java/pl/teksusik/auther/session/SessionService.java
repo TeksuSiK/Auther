@@ -1,8 +1,6 @@
 package pl.teksusik.auther.session;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;

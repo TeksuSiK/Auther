@@ -15,6 +15,9 @@ public class AutherConfiguration extends OkaeriConfig {
     @Comment("SQLite file name")
     private String sqliteFile = "auther.db";
 
+    private int minimumPasswordLength = 8;
+    private int maximumPasswordLength = 32;
+
     public StorageType getStorageType() {
         return storageType;
     }
@@ -41,5 +44,13 @@ public class AutherConfiguration extends OkaeriConfig {
 
     public String getSqliteFile() {
         return sqliteFile;
+    }
+
+    public int getMinimumPasswordLength() {
+        return minimumPasswordLength;
+    }
+
+    public int getMaximumPasswordLength() {
+        return maximumPasswordLength;
     }
 }

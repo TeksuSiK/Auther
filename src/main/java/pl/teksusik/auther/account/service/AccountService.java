@@ -1,8 +1,6 @@
 package pl.teksusik.auther.account.service;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.message.MessageConfiguration;

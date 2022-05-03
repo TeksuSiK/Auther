@@ -5,5 +5,25 @@ author: teksusik.
 api-version: 1.13
 commands:
   register:
+    aliases:
+      - reg
+    usage: /register <password> <password>
+    permission: auther.player.register
   unregister:
+    aliases:
+      - unreg
+    usage: /unregister <password>
+    permission: auther.player.unregister
   login:
+    aliases:
+      - l
+      - log
+    usage: /login <password>
+    permission: auther.player.login
+permissions:
+  auther.player.register:
+    default: true
+  auther.player.unregister:
+    default: true
+  auther.player.login:
+    default: true

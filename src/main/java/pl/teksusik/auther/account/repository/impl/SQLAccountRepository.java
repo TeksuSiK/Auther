@@ -18,10 +18,9 @@ public abstract class SQLAccountRepository implements AccountRepository {
 
     public void createTableIfNotExists() {
         String query = """
-                CREATE TABLE `auther_accounts` (
+                CREATE TABLE IF NOT EXISTS `auther_accounts` (
                 	`uuid` VARCHAR(36) NOT NULL,
-                	`password` VARCHAR(256) NOT NULL,
-                	UNIQUE KEY `uuid` (`uuid`) USING BTREE
+                	`password` VARCHAR(256) NOT NULL
                 );
                 """;
         try (Connection connection = this.hikariDataSource.getConnection();

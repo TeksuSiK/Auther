@@ -31,7 +31,7 @@ public class RegisterCommand implements CommandExecutor {
             return true;
         }
 
-        if (args[0].equals(args[1])) {
+        if (!args[0].equals(args[1])) {
             this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getPasswordNotMatch());
             return true;
         }

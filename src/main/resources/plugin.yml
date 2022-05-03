@@ -3,3 +3,6 @@ version: 1.0-SNAPSHOT
 main: pl.teksusik.auther.AutherPlugin
 author: teksusik.
 api-version: 1.13
+commands:
+  register:
+  unregister:

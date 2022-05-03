@@ -26,7 +26,7 @@ public class UnregisterCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length > 1) {
+        if (args.length < 1) {
             this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getBadUsage()); //TODO Placeholder with correct usage
             return true;
         }

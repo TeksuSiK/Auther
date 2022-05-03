@@ -10,6 +10,8 @@ import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.account.repository.impl.MySQLAccountRepository;
 import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
 import pl.teksusik.auther.account.service.AccountService;
+import pl.teksusik.auther.command.RegisterCommand;
+import pl.teksusik.auther.command.UnregisterCommand;
 import pl.teksusik.auther.configuration.AutherConfiguration;
 import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MiniMessageTransformer;
@@ -48,6 +50,9 @@ public class AutherPlugin extends JavaPlugin {
 
         this.accountRepository = this.loadAccountRepository();
         this.accountService = new AccountService(this.accountRepository, this.messageService, this.messageConfiguration);
+
+        this.getCommand("register").setExecutor(new RegisterCommand(this.accountService, this.messageService, this.messageConfiguration));
+        this.getCommand("unregister").setExecutor(new UnregisterCommand(this.accountService, this.messageService, this.messageConfiguration));
     }
 
     @Override

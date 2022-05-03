@@ -4,12 +4,17 @@ import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.exception.OkaeriException;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.slf4j.Logger;
 import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.account.repository.impl.MySQLAccountRepository;
 import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
 import pl.teksusik.auther.account.service.AccountService;
+import pl.teksusik.auther.command.LoginCommand;
 import pl.teksusik.auther.command.RegisterCommand;
 import pl.teksusik.auther.command.UnregisterCommand;
 import pl.teksusik.auther.configuration.AutherConfiguration;
@@ -17,6 +22,8 @@ import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MiniMessageTransformer;
 import pl.teksusik.auther.configuration.StorageType;
 import pl.teksusik.auther.message.MessageService;
+import pl.teksusik.auther.session.SessionListener;
+import pl.teksusik.auther.session.SessionService;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,14 +34,16 @@ public class AutherPlugin extends JavaPlugin {
     private final File autherConfigurationFile = new File(this.getDataFolder(), "config.yml");
     private AutherConfiguration autherConfiguration;
 
-    private AccountRepository accountRepository;
-    private AccountService accountService;
-
-    private BukkitAudiences audiences;
-
     private final File messageConfigurationFile = new File(this.getDataFolder(), "messages.yml");
     private MessageConfiguration messageConfiguration;
     private MessageService messageService;
+
+    private AccountRepository accountRepository;
+    private AccountService accountService;
+
+    private SessionService sessionService;
+
+    private BukkitAudiences audiences;
 
     @Override
     public void onEnable() {
@@ -51,8 +60,21 @@ public class AutherPlugin extends JavaPlugin {
         this.accountRepository = this.loadAccountRepository();
         this.accountService = new AccountService(this.accountRepository, this.messageService, this.messageConfiguration);
 
+        this.sessionService = new SessionService(this.accountRepository, this.messageService, this.messageConfiguration);
+
         this.getCommand("register").setExecutor(new RegisterCommand(this.accountService, this.messageService, this.messageConfiguration));
         this.getCommand("unregister").setExecutor(new UnregisterCommand(this.accountService, this.messageService, this.messageConfiguration));
+        this.getCommand("login").setExecutor(new LoginCommand(this.sessionService, this.messageService, this.messageConfiguration));
+
+        PluginManager pluginManager = this.getServer().getPluginManager();
+        pluginManager.registerEvents(new SessionListener(this, this.sessionService, this.messageService, this.messageConfiguration), this);
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            BukkitTask task = this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+                this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getLoginReminder());
+            }, 20L, 20L);
+            this.sessionService.getLoginTaskMap().put(player.getUniqueId(), task);
+        }
     }
 
     @Override

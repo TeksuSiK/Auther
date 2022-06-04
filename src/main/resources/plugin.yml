@@ -20,10 +20,15 @@ commands:
       - log
     usage: /login <password>
     permission: auther.player.login
+  totp:
+    usage: /totp [code]
+    permission: auther.player.totp
 permissions:
   auther.player.register:
     default: true
   auther.player.unregister:
     default: true
   auther.player.login:
+    default: true
+  auther.player.totp:
     default: true

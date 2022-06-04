@@ -1,5 +1,6 @@
 package pl.teksusik.auther;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
 import eu.okaeri.configs.ConfigManager;
 import eu.okaeri.configs.exception.OkaeriException;
 import eu.okaeri.configs.yaml.bukkit.YamlBukkitConfigurer;
@@ -17,6 +18,7 @@ import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
 import pl.teksusik.auther.account.service.AccountService;
 import pl.teksusik.auther.command.LoginCommand;
 import pl.teksusik.auther.command.RegisterCommand;
+import pl.teksusik.auther.command.TotpCommand;
 import pl.teksusik.auther.command.UnregisterCommand;
 import pl.teksusik.auther.configuration.AutherConfiguration;
 import pl.teksusik.auther.message.MessageConfiguration;
@@ -60,12 +62,13 @@ public class AutherPlugin extends JavaPlugin {
         this.messageService = new MessageService(this.logger, this.audiences);
 
         this.accountRepository = this.loadAccountRepository();
-        this.sessionService = new SessionService(this.accountRepository, this.messageService, this.messageConfiguration);
+        this.sessionService = new SessionService(this, this.accountRepository, this.messageService, this.messageConfiguration, new GoogleAuthenticator());
         this.accountService = new AccountService(this.accountRepository, this.sessionService, this.messageService, this.messageConfiguration);
 
         this.getCommand("register").setExecutor(new RegisterCommand(this.accountService, this.autherConfiguration, this.messageService, this.messageConfiguration));
         this.getCommand("unregister").setExecutor(new UnregisterCommand(this.accountService, this.messageService, this.messageConfiguration));
         this.getCommand("login").setExecutor(new LoginCommand(this.sessionService, this.messageService, this.messageConfiguration));
+        this.getCommand("totp").setExecutor(new TotpCommand(this.sessionService, this.messageService, this.messageConfiguration));
 
         PluginManager pluginManager = this.getServer().getPluginManager();
         pluginManager.registerEvents(new SessionListener(this, accountRepository, this.sessionService, this.messageService, this.messageConfiguration), this);

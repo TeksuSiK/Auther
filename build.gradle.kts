@@ -25,6 +25,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.1.0")
 
     implementation("at.favre.lib:bcrypt:0.9.0")
+    implementation("com.warrenstrange:googleauth:1.5.0")
 }
 
 tasks.named<ShadowJar>("shadowJar") {
@@ -35,4 +36,5 @@ tasks.named<ShadowJar>("shadowJar") {
     relocate("net.kyori", "pl.teksusik.auther.libs.net.kyori")
 
     relocate("at.favre", "pl.teksusik.auther.libs.at.favre")
+    relocate("com.warrenstrange", "pl.teksusik.auther.libs.com.warrenstrange")
 }

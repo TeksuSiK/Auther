@@ -18,6 +18,7 @@ public class MessageConfiguration extends OkaeriConfig {
     private Component accountUnregisterError = this.miniMessage.deserialize("<dark_red>Error: <red>There was an error unregistering your account.");
     private Component accountUnregisterSuccess = this.miniMessage.deserialize("<green>Your account has been successfully unregistered.");
     private Component incorrectPassword = this.miniMessage.deserialize("<dark_red>Error: <red>The password provided is incorrect.");
+    private Component incorrectTotp = this.miniMessage.deserialize("<dark_red>Error: <red>The TOTP password provided is incorrect.");
     private Component badUsage = this.miniMessage.deserialize("<dark_red>Error: <red>Bad usage.");
     private Component passwordNotMatch = this.miniMessage.deserialize("<dark_red>Error: <red>The passwords do not match.");
     private Component loginReminder = this.miniMessage.deserialize("<green>Login with /login <password>");
@@ -26,6 +27,7 @@ public class MessageConfiguration extends OkaeriConfig {
     private Component loginSuccess = this.miniMessage.deserialize("<green>You have successfully logged in.");
     private Component passwordTooShort = this.miniMessage.deserialize("<dark_red>Error: <red>Your password is too short.");
     private Component passwordTooLong = this.miniMessage.deserialize("<dark_red>Error: <red>Your password is too long.");
+    private Component totpReminder = this.miniMessage.deserialize("<green>Login with /totp <TOTP password>");
 
     public Component getAccountAlreadyExists() {
         return accountAlreadyExists;
@@ -53,6 +55,10 @@ public class MessageConfiguration extends OkaeriConfig {
 
     public Component getIncorrectPassword() {
         return incorrectPassword;
+    }
+
+    public Component getIncorrectTotp() {
+        return incorrectTotp;
     }
 
     public Component getBadUsage() {
@@ -85,6 +91,10 @@ public class MessageConfiguration extends OkaeriConfig {
 
     public Component getPasswordTooLong() {
         return passwordTooLong;
+    }
+
+    public Component getTotpReminder() {
+        return totpReminder;
     }
 
     @Exclude

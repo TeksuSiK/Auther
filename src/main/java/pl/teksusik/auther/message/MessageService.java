@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.slf4j.Logger;
 
-import java.util.List;
 import java.util.UUID;
 
 //TODO i18n

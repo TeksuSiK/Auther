@@ -2,7 +2,6 @@ package pl.teksusik.auther.session;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import org.bukkit.scheduler.BukkitTask;
 import pl.teksusik.auther.AutherPlugin;
 import pl.teksusik.auther.account.Account;

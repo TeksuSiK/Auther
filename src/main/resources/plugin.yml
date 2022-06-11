@@ -21,7 +21,7 @@ commands:
     usage: /login <password>
     permission: auther.player.login
   code:
-    usage: /code [code]
+    usage: /code <code>
     permission: auther.player.code
   totp:
     usage: /totp ["disable"]

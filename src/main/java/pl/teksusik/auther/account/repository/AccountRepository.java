@@ -10,4 +10,5 @@ public interface AccountRepository {
     boolean unregisterAccount(Account account);
     boolean isRegistered(UUID uuid);
     Optional<Account> findAccount(UUID uuid);
+    boolean setSecretKey(UUID uuid, String secretKey);
 }

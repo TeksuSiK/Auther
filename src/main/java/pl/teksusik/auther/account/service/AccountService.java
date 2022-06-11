@@ -1,6 +1,8 @@
 package pl.teksusik.auther.account.service;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import pl.teksusik.auther.account.Account;
 import pl.teksusik.auther.account.repository.AccountRepository;
 import pl.teksusik.auther.message.MessageConfiguration;
@@ -16,12 +18,14 @@ public class AccountService {
     private final SessionService sessionService;
     private final MessageService messageService;
     private final MessageConfiguration messageConfiguration;
+    private final GoogleAuthenticator authenticator;
 
-    public AccountService(AccountRepository accountRepository, SessionService sessionService, MessageService messageService, MessageConfiguration messageConfiguration) {
+    public AccountService(AccountRepository accountRepository, SessionService sessionService, MessageService messageService, MessageConfiguration messageConfiguration, GoogleAuthenticator authenticator) {
         this.accountRepository = accountRepository;
         this.sessionService = sessionService;
         this.messageService = messageService;
         this.messageConfiguration = messageConfiguration;
+        this.authenticator = authenticator;
     }
 
     public CompletableFuture<Void> registerAccount(UUID uuid, String password) {
@@ -32,7 +36,7 @@ public class AccountService {
             }
 
             String hashedPassword = BCrypt.withDefaults().hashToString(8, password.toCharArray());
-            Account account = new Account(uuid, hashedPassword);
+            Account account = new Account(uuid, hashedPassword, null);
             if (!this.accountRepository.registerAccount(account)) {
                 this.messageService.sendMessage(uuid, this.messageConfiguration.getAccountRegisterError());
                 return;
@@ -64,6 +68,28 @@ public class AccountService {
             }
 
             this.messageService.sendMessage(uuid, this.messageConfiguration.getAccountUnregisterSuccess());
+        });
+    }
+
+    public boolean hasTotpEnabled(UUID uuid) {
+        Optional<Account> optionalAccount = this.accountRepository.findAccount(uuid);
+        if (optionalAccount.isEmpty()) {
+            return false;
+        }
+        Account account = optionalAccount.get();
+
+        System.out.println(account.getSecretKey());
+        return account.getSecretKey() != null;
+    }
+
+
+    public GoogleAuthenticatorKey generateSecretKey() {
+        return this.authenticator.createCredentials();
+    }
+
+    public CompletableFuture<Void> setSecretKey(UUID uuid, String secretKey) {
+        return CompletableFuture.runAsync(() -> {
+            System.out.println(accountRepository.setSecretKey(uuid, secretKey));
         });
     }
 }

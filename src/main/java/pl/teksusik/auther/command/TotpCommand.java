@@ -1,22 +1,29 @@
 package pl.teksusik.auther.command;
 
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import pl.teksusik.auther.account.service.AccountService;
+import pl.teksusik.auther.configuration.AutherConfiguration;
 import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MessageService;
-import pl.teksusik.auther.session.SessionService;
 
 public class TotpCommand implements CommandExecutor {
-    private final SessionService sessionService;
+    private final AccountService accountService;
     private final MessageService messageService;
+    private final AutherConfiguration autherConfiguration;
     private final MessageConfiguration messageConfiguration;
 
-    public TotpCommand(SessionService sessionService, MessageService messageService, MessageConfiguration messageConfiguration) {
-        this.sessionService = sessionService;
+    public TotpCommand(AccountService accountService, MessageService messageService, AutherConfiguration autherConfiguration, MessageConfiguration messageConfiguration) {
+        this.accountService = accountService;
         this.messageService = messageService;
+        this.autherConfiguration = autherConfiguration;
         this.messageConfiguration = messageConfiguration;
     }
 
@@ -26,25 +33,32 @@ public class TotpCommand implements CommandExecutor {
             return true;
         }
 
-        if (args.length < 1) {
-            this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getBadUsage()); //TODO Placeholder with correct usage
+        if (args.length != 0 && args[0].equalsIgnoreCase("disable")) {
+            this.accountService.setSecretKey(player.getUniqueId(), null);
+            this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getDisabledTotp());
             return true;
         }
 
-        if (sessionService.isLoggedIn(player.getUniqueId())) {
-            this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getAlreadyLoggedIn());
+        if (this.accountService.hasTotpEnabled(player.getUniqueId())) {
+            this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getTotpAlreadyEnabled());
             return true;
         }
 
-        int code;
-        try {
-            code = Integer.parseInt(args[0]);
-        } catch (NumberFormatException exception) {
-            this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getBadUsage()); //TODO Placeholder with correct usage
-            return true;
-        }
+        GoogleAuthenticatorKey authenticatorKey = this.accountService.generateSecretKey();
 
-        this.sessionService.verifyTotp(player.getUniqueId(), code);
+        String url = GoogleAuthenticatorQRGenerator.getOtpAuthURL(this.autherConfiguration.getServerName(),
+                player.getUniqueId().toString(),
+                authenticatorKey);
+
+        this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getQrCode().clickEvent(ClickEvent.openUrl(url)));
+
+        this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getScratchKeys());
+        authenticatorKey.getScratchCodes().forEach(scratchCode -> this.messageService.sendMessage(player.getUniqueId(), Component.text("- " + scratchCode)));
+        //TODO Save scratch keys to repository and use them for account recovery
+
+        System.out.println(authenticatorKey.getKey());
+        this.accountService.setSecretKey(player.getUniqueId(), authenticatorKey.getKey());
+
         return true;
     }
 }

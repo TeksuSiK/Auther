@@ -15,6 +15,9 @@ public class AutherConfiguration extends OkaeriConfig {
     @Comment("SQLite file name")
     private String sqliteFile = "auther.db";
 
+    @Comment("Server name displayed in Authenticator app")
+    private String serverName = "auther";
+
     private int minimumPasswordLength = 8;
     private int maximumPasswordLength = 32;
 
@@ -44,6 +47,10 @@ public class AutherConfiguration extends OkaeriConfig {
 
     public String getSqliteFile() {
         return sqliteFile;
+    }
+
+    public String getServerName() {
+        return serverName;
     }
 
     public int getMinimumPasswordLength() {

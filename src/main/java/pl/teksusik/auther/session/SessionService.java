@@ -2,6 +2,7 @@ package pl.teksusik.auther.session;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import org.bukkit.scheduler.BukkitTask;
 import pl.teksusik.auther.AutherPlugin;
 import pl.teksusik.auther.account.Account;
@@ -54,6 +55,13 @@ public class SessionService {
                        this.messageService.sendMessage(uuid, this.messageConfiguration.getTotpReminder());
                    }, 20L, 20L);
                    this.totpLoginTaskMap.put(uuid, task);
+
+                   synchronized (this) {
+                       if (this.loginTaskMap.containsKey(uuid)) {
+                           this.loginTaskMap.get(uuid).cancel();
+                           this.loginTaskMap.remove(uuid);
+                       }
+                   }
                    return;
                }
            }

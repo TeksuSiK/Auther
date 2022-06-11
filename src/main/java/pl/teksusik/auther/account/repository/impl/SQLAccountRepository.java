@@ -20,7 +20,8 @@ public abstract class SQLAccountRepository implements AccountRepository {
         String query = """
                 CREATE TABLE IF NOT EXISTS `auther_accounts` (
                 	`uuid` VARCHAR(36) NOT NULL,
-                	`password` VARCHAR(256) NOT NULL
+                	`password` VARCHAR(256) NOT NULL,
+                	`secret` VARCHAR(256)
                 );
                 """;
         try (Connection connection = this.hikariDataSource.getConnection();
@@ -78,12 +79,15 @@ public abstract class SQLAccountRepository implements AccountRepository {
     @Override
     public Optional<Account> findAccount(UUID uuid) {
         try (Connection connection = this.hikariDataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT uuid, password FROM `auther_accounts` WHERE uuid = ?")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT uuid, password, secret FROM `auther_accounts` WHERE uuid = ?")) {
             preparedStatement.setString(1, uuid.toString());
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    return Optional.of(new Account(UUID.fromString(resultSet.getString("uuid")), resultSet.getString("password")));
+                    return Optional.of(new Account(
+                            UUID.fromString(resultSet.getString("uuid")),
+                            resultSet.getString("password"),
+                            resultSet.getString("secret")));
                 }
             }
         } catch (SQLException exception) {
@@ -91,5 +95,21 @@ public abstract class SQLAccountRepository implements AccountRepository {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public boolean setSecretKey(UUID uuid, String secretKey) {
+        try (Connection connection = this.hikariDataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE `auther_accounts` SET secret = ? WHERE uuid = ?")) {
+            System.out.println(secretKey);
+            preparedStatement.setString(1, secretKey);
+            preparedStatement.setString(2, uuid.toString());
+
+            preparedStatement.executeUpdate();
+            return true;
+        } catch (SQLException exception) {
+            this.logger.error("An error occurred while retrieving data from the database.", exception);
+            return false;
+        }
     }
 }

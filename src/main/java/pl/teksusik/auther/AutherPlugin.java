@@ -18,6 +18,7 @@ import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
 import pl.teksusik.auther.account.service.AccountService;
 import pl.teksusik.auther.command.LoginCommand;
 import pl.teksusik.auther.command.RegisterCommand;
+import pl.teksusik.auther.command.CodeCommand;
 import pl.teksusik.auther.command.TotpCommand;
 import pl.teksusik.auther.command.UnregisterCommand;
 import pl.teksusik.auther.configuration.AutherConfiguration;
@@ -61,14 +62,17 @@ public class AutherPlugin extends JavaPlugin {
         this.audiences = BukkitAudiences.create(this);
         this.messageService = new MessageService(this.logger, this.audiences);
 
+        GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+
         this.accountRepository = this.loadAccountRepository();
-        this.sessionService = new SessionService(this, this.accountRepository, this.messageService, this.messageConfiguration, new GoogleAuthenticator());
-        this.accountService = new AccountService(this.accountRepository, this.sessionService, this.messageService, this.messageConfiguration);
+        this.sessionService = new SessionService(this, this.accountRepository, this.messageService, this.messageConfiguration, googleAuthenticator);
+        this.accountService = new AccountService(this.accountRepository, this.sessionService, this.messageService, this.messageConfiguration, googleAuthenticator);
 
         this.getCommand("register").setExecutor(new RegisterCommand(this.accountService, this.autherConfiguration, this.messageService, this.messageConfiguration));
         this.getCommand("unregister").setExecutor(new UnregisterCommand(this.accountService, this.messageService, this.messageConfiguration));
         this.getCommand("login").setExecutor(new LoginCommand(this.sessionService, this.messageService, this.messageConfiguration));
-        this.getCommand("totp").setExecutor(new TotpCommand(this.sessionService, this.messageService, this.messageConfiguration));
+        this.getCommand("code").setExecutor(new CodeCommand(this.sessionService, this.messageService, this.messageConfiguration));
+        this.getCommand("totp").setExecutor(new TotpCommand(this.accountService, this.messageService, this.autherConfiguration, this.messageConfiguration));
 
         PluginManager pluginManager = this.getServer().getPluginManager();
         pluginManager.registerEvents(new SessionListener(this, accountRepository, this.sessionService, this.messageService, this.messageConfiguration), this);

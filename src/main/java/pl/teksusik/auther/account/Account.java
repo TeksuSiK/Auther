@@ -7,9 +7,10 @@ public class Account {
     private String password;
     private String secretKey;
 
-    public Account(UUID uuid, String password) {
+    public Account(UUID uuid, String password, String secretKey) {
         this.uuid = uuid;
         this.password = password;
+        this.secretKey = secretKey;
     }
 
     public UUID getUuid() {

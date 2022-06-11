@@ -101,7 +101,6 @@ public abstract class SQLAccountRepository implements AccountRepository {
     public boolean setSecretKey(UUID uuid, String secretKey) {
         try (Connection connection = this.hikariDataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE `auther_accounts` SET secret = ? WHERE uuid = ?")) {
-            System.out.println(secretKey);
             preparedStatement.setString(1, secretKey);
             preparedStatement.setString(2, uuid.toString());
 

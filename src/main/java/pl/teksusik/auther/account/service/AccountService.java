@@ -78,7 +78,6 @@ public class AccountService {
         }
         Account account = optionalAccount.get();
 
-        System.out.println(account.getSecretKey());
         return account.getSecretKey() != null;
     }
 
@@ -88,8 +87,6 @@ public class AccountService {
     }
 
     public CompletableFuture<Void> setSecretKey(UUID uuid, String secretKey) {
-        return CompletableFuture.runAsync(() -> {
-            System.out.println(accountRepository.setSecretKey(uuid, secretKey));
-        });
+        return CompletableFuture.runAsync(() -> accountRepository.setSecretKey(uuid, secretKey));
     }
 }

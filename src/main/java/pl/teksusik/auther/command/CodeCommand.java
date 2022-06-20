@@ -5,16 +5,19 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import pl.teksusik.auther.account.service.AccountService;
 import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MessageService;
 import pl.teksusik.auther.session.SessionService;
 
 public class CodeCommand implements CommandExecutor {
+    private final AccountService accountService;
     private final SessionService sessionService;
     private final MessageService messageService;
     private final MessageConfiguration messageConfiguration;
 
-    public CodeCommand(SessionService sessionService, MessageService messageService, MessageConfiguration messageConfiguration) {
+    public CodeCommand(AccountService accountService, SessionService sessionService, MessageService messageService, MessageConfiguration messageConfiguration) {
+        this.accountService = accountService;
         this.sessionService = sessionService;
         this.messageService = messageService;
         this.messageConfiguration = messageConfiguration;
@@ -31,8 +34,13 @@ public class CodeCommand implements CommandExecutor {
             return true;
         }
 
-        if (sessionService.isLoggedIn(player.getUniqueId())) {
+        if (this.sessionService.isLoggedIn(player.getUniqueId())) {
             this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getAlreadyLoggedIn());
+            return true;
+        }
+
+        if (!this.accountService.hasTotpEnabled(player.getUniqueId())) {
+            this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getTotpNotEnabled());
             return true;
         }
 

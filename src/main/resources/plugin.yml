@@ -26,6 +26,9 @@ commands:
   totp:
     usage: /totp ["disable"]
     permission: auther.player.totp
+  recovery:
+    usage: /recovery <code>
+    permission: auther.player.recovery
 permissions:
   auther.player.register:
     default: true
@@ -36,4 +39,6 @@ permissions:
   auther.player.code:
     default: true
   auther.player.totp:
+    default: true
+  auther.player.recovery:
     default: true

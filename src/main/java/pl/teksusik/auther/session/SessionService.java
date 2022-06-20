@@ -100,6 +100,14 @@ public class SessionService {
        });
    }
 
+   public CompletableFuture<Void> verifyScratch(UUID uuid, int scratch) {
+        return CompletableFuture.runAsync(() -> {
+           if (this.accountRepository.useScratchCode(uuid, scratch)) {
+               this.loginPlayer(uuid, "", true);
+           }
+        });
+   }
+
    public void logoutPlayer(UUID uuid) {
        if (!this.isLoggedIn(uuid)) {
            this.loginTaskMap.get(uuid).cancel();

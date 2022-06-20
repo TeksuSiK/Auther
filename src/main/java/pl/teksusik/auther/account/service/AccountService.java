@@ -9,6 +9,7 @@ import pl.teksusik.auther.message.MessageConfiguration;
 import pl.teksusik.auther.message.MessageService;
 import pl.teksusik.auther.session.SessionService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -88,5 +89,13 @@ public class AccountService {
 
     public CompletableFuture<Void> setSecretKey(UUID uuid, String secretKey) {
         return CompletableFuture.runAsync(() -> accountRepository.setSecretKey(uuid, secretKey));
+    }
+
+    public CompletableFuture<Boolean> addScratchCodes(UUID uuid, List<Integer> scratches) {
+        return CompletableFuture.supplyAsync(() -> accountRepository.addScratchCodes(uuid, scratches));
+    }
+
+    public CompletableFuture<Boolean> useScratchCode(UUID uuid, int scratch) {
+        return CompletableFuture.supplyAsync(() -> accountRepository.useScratchCode(uuid, scratch));
     }
 }

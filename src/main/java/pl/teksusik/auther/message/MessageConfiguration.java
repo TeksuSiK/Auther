@@ -29,6 +29,7 @@ public class MessageConfiguration extends OkaeriConfig {
     private Component passwordTooLong = this.miniMessage.deserialize("<dark_red>Error: <red>Your password is too long.");
     private Component totpReminder = this.miniMessage.deserialize("<green>Login with /code <TOTP password>");
     private Component totpAlreadyEnabled = this.miniMessage.deserialize("<dark_red>Error: <red>You already have TOTP login enabled");
+    private Component totpNotEnabled = this.miniMessage.deserialize("<dark_red>Error: <red>You don't have TOTP login enabled");
     private Component qrCode = this.miniMessage.deserialize("<green>Your QR code URL is available <bold>here");
     private Component scratchKeys = this.miniMessage.deserialize("<green>Your scratch keys:");
     private Component disabledTotp = this.miniMessage.deserialize("<green>You have successfully disabled TOTP login");
@@ -103,6 +104,10 @@ public class MessageConfiguration extends OkaeriConfig {
 
     public Component getTotpAlreadyEnabled() {
         return totpAlreadyEnabled;
+    }
+
+    public Component getTotpNotEnabled() {
+        return totpNotEnabled;
     }
 
     public Component getQrCode() {

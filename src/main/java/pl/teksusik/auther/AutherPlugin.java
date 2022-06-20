@@ -18,6 +18,7 @@ import pl.teksusik.auther.account.repository.impl.SQLiteAccountRepository;
 import pl.teksusik.auther.account.service.AccountService;
 import pl.teksusik.auther.command.CodeCommand;
 import pl.teksusik.auther.command.LoginCommand;
+import pl.teksusik.auther.command.RecoveryCommand;
 import pl.teksusik.auther.command.RegisterCommand;
 import pl.teksusik.auther.command.TotpCommand;
 import pl.teksusik.auther.command.UnregisterCommand;
@@ -73,6 +74,7 @@ public class AutherPlugin extends JavaPlugin {
         this.getCommand("login").setExecutor(new LoginCommand(this.sessionService, this.messageService, this.messageConfiguration));
         this.getCommand("code").setExecutor(new CodeCommand(this.sessionService, this.messageService, this.messageConfiguration));
         this.getCommand("totp").setExecutor(new TotpCommand(this.accountService, this.messageService, this.autherConfiguration, this.messageConfiguration));
+        this.getCommand("recovery").setExecutor(new RecoveryCommand(this.accountService, this.sessionService, this.messageService, this.messageConfiguration));
 
         PluginManager pluginManager = this.getServer().getPluginManager();
         pluginManager.registerEvents(new SessionListener(this, accountRepository, this.sessionService, this.messageService, this.messageConfiguration), this);

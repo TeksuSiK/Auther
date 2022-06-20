@@ -52,9 +52,9 @@ public class TotpCommand implements CommandExecutor {
 
         this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getQrCode().clickEvent(ClickEvent.openUrl(url)));
 
+        this.accountService.addScratchCodes(player.getUniqueId(), authenticatorKey.getScratchCodes());
         this.messageService.sendMessage(player.getUniqueId(), this.messageConfiguration.getScratchKeys());
         authenticatorKey.getScratchCodes().forEach(scratchCode -> this.messageService.sendMessage(player.getUniqueId(), Component.text("- " + scratchCode)));
-        //TODO Save scratch keys to repository and use them for account recovery
 
         this.accountService.setSecretKey(player.getUniqueId(), authenticatorKey.getKey());
 

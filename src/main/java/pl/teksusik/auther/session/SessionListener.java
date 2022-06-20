@@ -142,7 +142,8 @@ public class SessionListener implements Listener {
             String[] args = event.getMessage().split(" ");
             if (!(args[0].equalsIgnoreCase("/login") || args[0].equalsIgnoreCase("/l") || args[0].equalsIgnoreCase("/log")
             || args[0].equalsIgnoreCase("/register") || args[0].equalsIgnoreCase("/reg")
-            || args[0].equalsIgnoreCase("/code"))) {
+            || args[0].equalsIgnoreCase("/code")
+            || args[0].equalsIgnoreCase("/recovery"))) {
                 event.setCancelled(true);
             }
         }

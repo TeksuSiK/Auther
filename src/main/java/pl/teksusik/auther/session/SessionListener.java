@@ -1,5 +1,6 @@
 package pl.teksusik.auther.session;
 
+import org.apache.commons.logging.Log;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -138,13 +139,27 @@ public class SessionListener implements Listener {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        if (!this.sessionService.isLoggedIn(event.getPlayer().getUniqueId())) {
+        Player player = event.getPlayer();
+        if (!this.sessionService.isLoggedIn(player.getUniqueId())) {
             String[] args = event.getMessage().split(" ");
-            if (!(args[0].equalsIgnoreCase("/login") || args[0].equalsIgnoreCase("/l") || args[0].equalsIgnoreCase("/log")
-            || args[0].equalsIgnoreCase("/register") || args[0].equalsIgnoreCase("/reg")
-            || args[0].equalsIgnoreCase("/code")
-            || args[0].equalsIgnoreCase("/recovery"))) {
-                event.setCancelled(true);
+
+            LoginState loginState = this.sessionService.getLoginStateMap().get(player.getUniqueId());
+            if (loginState == null) {
+                this.sessionService.getLoginStateMap().put(player.getUniqueId(), LoginState.WAITING_FOR_PASSWORD);
+                loginState = LoginState.WAITING_FOR_PASSWORD;
+            }
+
+            if (loginState.equals(LoginState.WAITING_FOR_PASSWORD)) {
+                if (!(args[0].equalsIgnoreCase("/login") || args[0].equalsIgnoreCase("/l") || args[0].equalsIgnoreCase("/log")
+                        || args[0].equalsIgnoreCase("/register") || args[0].equalsIgnoreCase("/reg"))) {
+                    event.setCancelled(true);
+                }
+            }
+
+            if (loginState.equals(LoginState.WAITING_FOR_TOTP)) {
+                if (!(args[0].equalsIgnoreCase("/code") || args[0].equalsIgnoreCase("/recovery"))) {
+                    event.setCancelled(true);
+                }
             }
         }
     }

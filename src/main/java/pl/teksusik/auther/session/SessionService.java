@@ -24,6 +24,7 @@ public class SessionService {
 
     private final Map<UUID, BukkitTask> loginTaskMap = new HashMap<>();
     private final Map<UUID, BukkitTask> totpLoginTaskMap = new HashMap<>();
+    private final Map<UUID, LoginState> loginStateMap = new HashMap<>();
 
     public SessionService(AutherPlugin plugin, AccountRepository accountRepository, MessageService messageService, MessageConfiguration messageConfiguration, GoogleAuthenticator authenticator) {
         this.plugin = plugin;
@@ -55,6 +56,8 @@ public class SessionService {
                    }, 20L, 20L);
                    this.totpLoginTaskMap.put(uuid, task);
 
+                   this.getLoginStateMap().put(uuid, LoginState.WAITING_FOR_TOTP);
+
                    synchronized (this) {
                        if (this.loginTaskMap.containsKey(uuid)) {
                            this.loginTaskMap.get(uuid).cancel();
@@ -77,6 +80,7 @@ public class SessionService {
                }
            }
 
+           this.getLoginStateMap().put(uuid, LoginState.LOGGED_IN);
            this.messageService.sendMessage(uuid, this.messageConfiguration.getLoginSuccess());
        });
    }
@@ -113,6 +117,8 @@ public class SessionService {
            this.loginTaskMap.get(uuid).cancel();
            this.loginTaskMap.remove(uuid);
        }
+
+       this.getLoginStateMap().remove(uuid);
    }
 
    public boolean isLoggedIn(UUID uuid) {
@@ -125,5 +131,9 @@ public class SessionService {
 
     public Map<UUID, BukkitTask> getTotpLoginTaskMap() {
         return totpLoginTaskMap;
+    }
+
+    public Map<UUID, LoginState> getLoginStateMap() {
+        return loginStateMap;
     }
 }
